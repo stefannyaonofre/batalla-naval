@@ -13,8 +13,10 @@ const Home = () => {
   const [cantidadAtaques, setCantidadAtaques] = useState(0);
 
   if(cantidadAtaques == 5){
-    Swal.fire("Excelente!", "Has destruido todos los barcos", "success");
-    window.location.reload()
+    Swal.fire("Excelente!", "Has destruido todos los barcos", "success")
+    .then(() => {
+      window.location.reload();
+    });
   }
 
   useEffect(() => {
@@ -48,10 +50,10 @@ const Home = () => {
       const validar = posicionBarco.filter((item) => item == posicion);
       if (!ataques.some((item) => item.position === posicion)) {
         if (validar.length > 0) {
-          setAtaques([...ataques, { position: posicion, isStroke: "X" }]);
+          setAtaques([...ataques, { position: posicion, isStroke: "O" }]);
           setCantidadAtaques(cantidadAtaques + 1)
         } else {
-          setAtaques([...ataques, { position: posicion, isStroke: "O" }]);
+          setAtaques([...ataques, { position: posicion, isStroke: "X" }]);
         }
       } else {
         Swal.fire("Oops", "Ya realizo el ataque en esta posición", "error");

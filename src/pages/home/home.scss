@@ -1,0 +1,60 @@
+.home_batalla {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    &_comandos {
+        display: flex;
+        gap: 8px;
+
+        &_input {
+            border-radius: 5px;
+            padding: 4px;
+        }
+
+        &_button {
+
+            &-ejecutar {
+                padding: 6px 8px;
+                border-radius: 5px;
+                border: none;
+                background-color: #ffc1d5;
+            }
+
+            &-limpiar{
+                padding: 6px 8px;
+                border-radius: 5px;
+                border: none;
+                background-color: #fa8fb1;  
+            }
+
+        }
+    }
+}
+
+.home_batalla_matriz table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  .home_batalla_matriz th,
+  .home_batalla_matriz td {
+    border: 1px solid #fa8fb1;
+    padding: 8px;
+    text-align: center;
+  }
+  
+  .home_batalla_matriz th {
+    background-color: #ffc1d5;
+    font-weight: bold;
+  }
+  
+  .home_batalla_matriz th:first-child,
+  .home_batalla_matriz td:first-child {
+    border-left: none;
+  }
+  
+  .home_batalla_matriz th:last-child,
+  .home_batalla_matriz td:last-child {
+    border-right: none;
+  }

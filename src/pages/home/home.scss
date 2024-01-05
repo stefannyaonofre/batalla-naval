@@ -1,7 +1,15 @@
 .home_batalla {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 5px;
+    margin: 50px;
+    margin-top: 10px;
+    font-family: cursive;
+
+    h1{
+      color: #fa8fb1;
+      text-align: center;
+    }
 
     &_comandos {
         display: flex;
@@ -10,6 +18,7 @@
         &_input {
             border-radius: 5px;
             padding: 4px;
+            text-transform: uppercase;
         }
 
         &_button {
@@ -42,6 +51,8 @@
     border: 1px solid #fa8fb1;
     padding: 8px;
     text-align: center;
+    font-size: large;
+    cursor: pointer;
   }
   
   .home_batalla_matriz th {
@@ -58,3 +69,13 @@
   .home_batalla_matriz td:last-child {
     border-right: none;
   }
+
+  .batalla_color_ataque{
+    color: #fa8fb1;
+  }
+
+  .batalla_color_fallo{
+    color: aqua;
+  }
+
+  

@@ -17,33 +17,17 @@ const Home = () => {
   const [comando, setComando] = useState();
   const [ataques, setAtaques] = useState([]);
   const [cantidadAtaques, setCantidadAtaques] = useState(0);
-  let contador = 0;
-  let cont = 0;
-
-  if (cantidadAtaques == cantidadBarcos) {
-    Swal.fire("Excelente!", "Has destruido todos los barcos", "success").then(
-      () => {
-        window.location.reload();
-      }
-    );
-  }
+  const [contador, setContador] = useState(0);
 
   useEffect(() => {
     posicionesAleatoria();
   }, []);
 
   useEffect(() => {
-    console.log("cambio");
-    if (cont >= 1) {
-      if (contador < cantidadBarcos) {
-        contador++;
-        posicionesAleatoria();
-      } else {
-        contador = 0;
-        return;
-      }
-    }else{
-      cont ++;
+    verBarcoDescubierto();
+    if (contador < cantidadBarcos) {
+      setContador(contador + 1);
+      posicionesAleatoria(contador);
     }
   }, [posicionBarco]);
 
@@ -51,105 +35,156 @@ const Home = () => {
     setComando(e.target.value);
   };
 
-  /**
-   * función que valida si las posiciones del barco se pueden utilizar, segun la orientacion
-   * @param {*} orientacion 1 es vertical y 2 horizontal
-   */
-  const validarOrientacion = (orientacion, numFila, numColumna) => {
+  const validarOrientacion = (orientacion, numFila, numColumna, contador) => {
     let arrayPosiciones = [];
-    if (Number(orientacion) == 1) {
+    if (Number(orientacion) === 1) {
       for (
         let i = numFila;
-        i < (numFila + cantESpacionBarco > 9 ? 9 : numFila + cantESpacionBarco);
+        i < (numFila + cantESpacionBarco > (cantFilas - 1) ? (cantFilas - 1) : numFila + cantESpacionBarco);
         i++
       ) {
         const fila = String.fromCharCode(65 + (i + 1));
         if (posicionBarco.length > 0) {
-          posicionBarco?.map((item) => {
+          let encontro = false;
+          posicionBarco?.forEach((item) => {
             const validar = item.filter(
-              (element) => element == `${fila}${numColumna + 1}`
+              (element) => element.posicion === `${fila}${numColumna + 1}`
             );
             if (validar.length > 0) {
-              posicionesAleatoria();
-            } else {
-              arrayPosiciones.push(`${fila}${numColumna + 1}`);
+              encontro = true;
             }
           });
+
+          if (!encontro) {
+            const newPosition = {
+              posicion: `${fila}${numColumna + 1}`,
+              encontrado: false,
+            };
+            arrayPosiciones.push(newPosition);
+          } else {
+            if (contador < cantidadBarcos) {
+              posicionesAleatoria(contador);
+            }
+          }
         } else {
-          arrayPosiciones.push(`${fila}${numColumna + 1}`);
+          const newPosition = {
+            posicion: `${fila}${numColumna + 1}`,
+            encontrado: false,
+          };
+          arrayPosiciones.push(newPosition);
         }
       }
     } else {
       for (
         let i = numColumna;
         i <
-        (numColumna + cantESpacionBarco >= 10
-          ? 10
+        (numColumna + cantESpacionBarco >= cantColumnas
+          ? cantColumnas
           : numColumna + cantESpacionBarco);
         i++
       ) {
         const fila = String.fromCharCode(65 + numFila + 1);
         if (posicionBarco.length > 0) {
-          posicionBarco?.map((item) => {
+          let encontro = false;
+          posicionBarco?.forEach((item) => {
             const validar = item.filter(
-              (element) => element == `${fila}${i + 1}`
+              (element) => element.posicion === `${fila}${i + 1}`
             );
             if (validar.length > 0) {
-              posicionesAleatoria();
-            } else {
-              arrayPosiciones.push(`${fila}${i + 1}`);
+              encontro = true;
             }
           });
+
+          if (!encontro) {
+            const newPosition = {
+              posicion: `${fila}${i + 1}`,
+              encontrado: false,
+            };
+            arrayPosiciones.push(newPosition);
+          } else {
+            if (contador < cantidadBarcos) {
+              posicionesAleatoria(contador);
+            }
+          }
         } else {
-          arrayPosiciones.push(`${fila}${i + 1}`);
+          const newPosition = {
+            posicion: `${fila}${i + 1}`,
+            encontrado: false,
+          };
+          arrayPosiciones.push(newPosition);
         }
       }
     }
-    if (arrayPosiciones.length == cantESpacionBarco) {
+    if (arrayPosiciones.length === cantESpacionBarco) {
       const arrayTemp = [...posicionBarco, arrayPosiciones];
-      console.log(arrayTemp);
       setPosicionBarco(arrayTemp);
     } else {
       if (contador < cantidadBarcos) {
-        posicionesAleatoria();
+        posicionesAleatoria(contador);
       }
     }
   };
 
-  const posicionesAleatoria = () => {
+  const posicionesAleatoria = (contador) => {
     const numFila = Math.floor(Math.random() * cantFilas);
     const numColumna = Math.floor(Math.random() * cantColumnas);
     const orientacion = (Math.floor(Math.random() * 2) + 1).toString();
-    validarOrientacion(orientacion, numFila - 1, numColumna);
+    validarOrientacion(orientacion, numFila - 1, numColumna, contador);
   };
 
-  const validarPosicionBarco = () => {
-    console.log(posicionBarco);
-    // if (comando?.length > 0 && cantidadAtaques < cantidadBarcos) {
-    //   const posicion = comando.toUpperCase();
-    //   const validar = posicionBarco.filter((item) => item == posicion);
-    //   if (!ataques.some((item) => item.position === posicion)) {
-    //     if (validar.length > 0) {
-    //       setAtaques([...ataques, { position: posicion, isStroke: "O" }]);
-    //       setCantidadAtaques(cantidadAtaques + 1);
-    //     } else {
-    //       setAtaques([...ataques, { position: posicion, isStroke: "X" }]);
-    //     }
-    //   } else {
-    //     Swal.fire("Oops", "Ya realizo el ataque en esta posición", "error");
-    //   }
-    // } else {
-    //   Swal.fire("Oops", "Debe ingresar una posición", "error");
-    // }
+  const validarPosicionBarco = (posicion) => {
+    const pos = posicion == '' ? comando.toUpperCase() : posicion;
+    if (pos?.length > 0) {
+      const copiaPosicionBarco = [...posicionBarco];
+      let descubierto = "";
+      copiaPosicionBarco.forEach((item) => {
+        const encontroPosicion = item.find(
+          (element) => element.posicion == pos
+        );
+        if (encontroPosicion) {
+          encontroPosicion.encontrado = true;
+          setPosicionBarco([...copiaPosicionBarco]);
+          descubierto = "O";
+          setAtaques([...ataques, { posicion: pos, descubierto }]);
+          throw new Error("");
+        } else {
+          descubierto = "X";
+          setAtaques([...ataques, { posicion: pos, descubierto }]);
+        }
+      });
+    } else {
+      Swal.fire("Oops", "Debe ingresar una posición", "error");
+    }
+    setComando('');
   };
 
-  const pintarAtaque = (position, filaIndex, columnaIndex) => {
-    const posicionActual = position.join("");
-    const ataqueEnPosicion = ataques.find(
-      (item) => item.position === posicionActual
-    );
+  const verBarcoDescubierto = () => {
+    let contador = 0;
+    posicionBarco.map((item) => {
+      let cont = 0;
+      item.map((element) => {
+        if (element.encontrado) {
+          cont++;
+        }
+      });
+      if (cont == cantESpacionBarco) {
+        contador++;
+      }
+    });
+    setCantidadAtaques(contador);
+    if (contador === cantidadBarcos) {
+      Swal.fire({title: "Excelente!",html: "Has destruido todos los barcos", icon:"success",confirmButtonText: 'Aceptar'}).then(
+        () => {
+          window.location.reload();
+        }
+      );
+    }
+  };
+
+  const pintarAtaque = (posicion) => {
+    const ataqueEnPosicion = ataques.find((item) => item.posicion === posicion);
     if (ataqueEnPosicion) {
-      return ataqueEnPosicion.isStroke;
+      return ataqueEnPosicion.descubierto;
     } else {
       return "";
     }
@@ -161,7 +196,9 @@ const Home = () => {
 
   return (
     <div className="home_batalla">
-      <span>barcos destruidos: {cantidadAtaques}</span>
+      <h1>Batalla Naval</h1>
+      <span>Para Jugar puedes ingresar el comando fila columna en el campo de texto, o puedes dar click en el recuadro del tablero que deseas descubrir</span>
+      <h4>Barcos destruidos: {cantidadAtaques}</h4>
       <span>Comandos:</span>
       <div className="home_batalla_comandos">
         <input
@@ -172,7 +209,7 @@ const Home = () => {
         />
         <button
           className="home_batalla_comandos_button-ejecutar"
-          onClick={validarPosicionBarco}
+          onClick={() => validarPosicionBarco('')}
         >
           Ejecutar
         </button>
@@ -199,8 +236,11 @@ const Home = () => {
               <tr key={filaIndex}>
                 <th>{fila}</th>
                 {columnas.map((columna, columnaIndex) => (
-                  <td key={columnaIndex}>
-                    {pintarAtaque([fila, columna], filaIndex, columnaIndex)}
+                  <td 
+                  key={columnaIndex} 
+                  onClick={() => validarPosicionBarco(`${fila}${columna}`)} 
+                  className={`${pintarAtaque(`${fila}${columna}`) == 'X' ? 'batalla_color_fallo' : pintarAtaque(`${fila}${columna}`) == 'O' ? 'batalla_color_ataque' : ''}`}>
+                    {pintarAtaque(`${fila}${columna}`)}
                   </td>
                 ))}
               </tr>
